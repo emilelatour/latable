@@ -1,0 +1,31 @@
+Package: latable
+Title: Latour's Table Functions and Helpers
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Emile",
+           family = "Latour",
+           role = c("aut", "cre"),
+           email = "latour@ohsu.edu")
+Description: Variety of functions to format tables for presentation. Univaribale and multivariable regression tables. Wrappers around tableone to format the way I like. Generally all things tables.
+Encoding: UTF-8
+LazyData: true
+Imports:
+    broom,
+    car,
+    dplyr,
+    glue,
+    janitor, 
+    knitr, 
+    labelled,
+    magrittr, 
+    purrr,
+    stats,
+    stringr,
+    tibble,
+    tidyr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
+Suggests: 
+    rmarkdown
+VignetteBuilder: knitr
+License: MIT + file LICENSE
