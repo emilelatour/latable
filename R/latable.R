@@ -17,7 +17,8 @@ NULL
 ## https://github.com/tidymodels/infer/blob/master/R/infer.R
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(
-    c(".", 
+    c(".",
+      "Category", 
       "conf_high",
       "conf_low",
       "covariate",
@@ -30,10 +31,13 @@ if (getRversion() >= "2.15.1") {
       "estimate",
       "estimate_adjusted",
       "estimate_unadjusted",
+      "index",
+      "level",
       "lower_ci",
       "lower_ci_adjusted",
       "lower_ci_unadjusted",
       "names_to_match",
+      "p",
       "p_value",
       "p_value_adjusted",
       "p_value_lrt",
@@ -46,12 +50,15 @@ if (getRversion() >= "2.15.1") {
       "pr_chisq",
       "ref",
       "res_univ",
+      "row_id",
       "rowname",
       "signif_adjusted",
       "signif_lrt_adjusted",
       "signif_unadjusted",
       "signif_wald_adjusted",
+      "SMD",
       "term",
+      "test",
       "upper_ci",
       "upper_ci_adjusted",
       "upper_ci_unadjusted",
@@ -59,7 +66,6 @@ if (getRversion() >= "2.15.1") {
     ))
   
 }
-
 
 
 

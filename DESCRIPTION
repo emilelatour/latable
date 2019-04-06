@@ -21,6 +21,8 @@ Imports:
     purrr,
     stats,
     stringr,
+    survival,
+    tableone,
     tibble,
     tidyr
 Roxygen: list(markdown = TRUE)
