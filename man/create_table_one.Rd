@@ -114,7 +114,7 @@ library(labelled)
 # Tibble with labels
 var_labels <- tibble::tribble(
                      ~vars,                                      ~labels,
-                      "id",                                 "Cae Number",
+                      "id",                                "Case Number",
                     "time",          "Number of days since registration",
                   "status",                         "Status at endpoint",
                      "trt",                            "Treatment group",
