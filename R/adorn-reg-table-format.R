@@ -116,14 +116,14 @@ adorn_reg_table_format <- function(tab,
                                    format = "html",
                                    separate_text = " to ",
                                    var_labels = NULL) {
-
+  
   if (length(names(tab)) == 9) {
-
-
+    
+    
     ## Combine/select p-values ----------------
-
+    
     if (pval_fmt == "combo") {
-
+      
       tab <- tab %>%
         mutate(p_value_wald = dplyr::case_when(
           is.na(ref) ~ p_value_wald,
@@ -131,46 +131,46 @@ adorn_reg_table_format <- function(tab,
           ref == "" ~ NA_real_),
           p_value = dplyr::coalesce(p_value_wald,
                                     p_value_lrt))
-
+      
     } else if (pval_fmt == "lrt") {
-
+      
       tab <- tab %>%
         mutate(p_value = p_value_lrt)
-
+      
     } else if (pval_fmt == "wald") {
-
+      
       tab <- tab %>%
         mutate(p_value = p_value_wald)
-
+      
     } else if (pval_fmt == "all") {
-
+      
       tab <- tab %>%
         mutate(p_value = dplyr::coalesce(p_value_wald,
                                          p_value_lrt))
-
+      
     }
-
+    
     ## Recalc signif indicator ----------------
-
+    
     tab <- tab %>%
       mutate(signif = .calc_sig_ind(p_value,
                                     format = format))
-
+    
     ## Format p-value ----------------
-
+    
     tab <- tab %>%
       mutate(p_value = .mypval(p_value))
-
-
+    
+    
     ## Combine estimate and CI ----------------
-
+    
     tab <- tab %>%
       mutate(est_is_na = dplyr::if_else(is.na(estimate),
                                         TRUE,
                                         FALSE)) %>%
       mutate_at(.vars = vars(estimate, lower_ci, upper_ci),
-                .funs = list ~ .myround(.,
-                                        digits = digits)) %>%
+                .funs = list(~ .myround(.,
+                                        digits = digits))) %>%
       mutate(est_ci = paste0(estimate, " (",
                              lower_ci, separate_text, upper_ci, ")"),
              est_ci = dplyr::if_else(est_is_na,
@@ -178,10 +178,10 @@ adorn_reg_table_format <- function(tab,
                                      est_ci)) %>%
       mutate(est_ci = dplyr::coalesce(est_ci,
                                       ref))
-
-
+    
+    
     ## Select columns and replace NAs ----------------
-
+    
     tab <- tab %>%
       dplyr::select(covariate,
                     term,
@@ -190,17 +190,17 @@ adorn_reg_table_format <- function(tab,
                     signif) %>%
       mutate_all(.,
                  list(~ dplyr::if_else(is.na(.), "", .)))
-
-
+    
+    
   } else if (length(names(tab)) == 15) {
-
-
+    
+    
     ## Combine/select p-values ----------------
-
+    
     # Univariable
-
+    
     if (pval_fmt == "combo") {
-
+      
       tab <- tab %>%
         mutate(p_value_wald_unadjusted = dplyr::case_when(
           is.na(ref) ~ p_value_wald_unadjusted,
@@ -208,30 +208,30 @@ adorn_reg_table_format <- function(tab,
           ref == "" ~ NA_real_),
           p_value_unadjusted = dplyr::coalesce(p_value_wald_unadjusted,
                                                p_value_lrt_unadjusted))
-
+      
     } else if (pval_fmt == "lrt") {
-
+      
       tab <- tab %>%
         mutate(p_value_unadjusted = p_value_lrt_unadjusted)
-
+      
     } else if (pval_fmt == "wald") {
-
+      
       tab <- tab %>%
         mutate(p_value_unadjusted = p_value_wald_unadjusted)
-
+      
     } else if (pval_fmt == "all") {
-
+      
       tab <- tab %>%
         mutate(p_value_unadjusted = dplyr::coalesce(p_value_wald_unadjusted,
                                                     p_value_lrt_unadjusted))
-
+      
     }
-
-
+    
+    
     # Multivariable
-
+    
     if (pval_fmt == "combo") {
-
+      
       tab <- tab %>%
         mutate(p_value_wald_adjusted = dplyr::case_when(
           is.na(ref) ~ p_value_wald_adjusted,
@@ -239,45 +239,45 @@ adorn_reg_table_format <- function(tab,
           ref == "" ~ NA_real_),
           p_value_adjusted = dplyr::coalesce(p_value_wald_adjusted,
                                              p_value_lrt_adjusted))
-
+      
     } else if (pval_fmt == "lrt") {
-
+      
       tab <- tab %>%
         mutate(p_value_adjusted = p_value_lrt_adjusted)
-
+      
     } else if (pval_fmt == "wald") {
-
+      
       tab <- tab %>%
         mutate(p_value_adjusted = p_value_wald_adjusted)
-
+      
     } else if (pval_fmt == "all") {
-
+      
       tab <- tab %>%
         mutate(p_value_adjusted = dplyr::coalesce(p_value_wald_adjusted,
                                                   p_value_lrt_adjusted))
-
+      
     }
-
-
-
-
+    
+    
+    
+    
     ## Recalc signif indicator ----------------
-
+    
     tab <- tab %>%
       mutate(signif_unadjusted = .calc_sig_ind(p_value_unadjusted,
                                                format = format),
              signif_adjusted = .calc_sig_ind(p_value_adjusted,
                                              format = format))
-
+    
     ## Format p-value ----------------
-
+    
     tab <- tab %>%
       mutate(p_value_unadjusted = .mypval(p_value_unadjusted),
              p_value_adjusted = .mypval(p_value_adjusted))
-
-
+    
+    
     ## Combine estimate and CI ----------------
-
+    
     # Univariable
     tab <- tab %>%
       mutate(est_is_na_unadjusted = dplyr::if_else(is.na(estimate_unadjusted),
@@ -286,8 +286,8 @@ adorn_reg_table_format <- function(tab,
       mutate_at(.vars = vars(estimate_unadjusted,
                              lower_ci_unadjusted,
                              upper_ci_unadjusted),
-                .funs = list ~ .myround(.,
-                                        digits = digits)) %>%
+                .funs = list(~ .myround(.,
+                                        digits = digits))) %>%
       mutate(est_ci_unadjusted = paste0(estimate_unadjusted, " (",
                                         lower_ci_unadjusted, separate_text,
                                         upper_ci_unadjusted, ")"),
@@ -296,7 +296,7 @@ adorn_reg_table_format <- function(tab,
                                                 est_ci_unadjusted)) %>%
       mutate(est_ci_unadjusted = dplyr::coalesce(est_ci_unadjusted,
                                                  ref))
-
+    
     # Multivariable
     tab <- tab %>%
       mutate(est_is_na_adjusted = dplyr::if_else(is.na(estimate_adjusted),
@@ -305,8 +305,8 @@ adorn_reg_table_format <- function(tab,
       mutate_at(.vars = vars(estimate_adjusted,
                              lower_ci_adjusted,
                              upper_ci_adjusted),
-                .funs = list ~ .myround(.,
-                                        digits = digits)) %>%
+                .funs = list(~ .myround(.,
+                                        digits = digits))) %>%
       mutate(est_ci_adjusted = paste0(estimate_adjusted, " (",
                                       lower_ci_adjusted, separate_text,
                                       upper_ci_adjusted, ")"),
@@ -315,10 +315,10 @@ adorn_reg_table_format <- function(tab,
                                               est_ci_adjusted)) %>%
       mutate(est_ci_adjusted = dplyr::coalesce(est_ci_adjusted,
                                                ref))
-
-
+    
+    
     ## Select columns and replace NAs ----------------
-
+    
     tab <- tab %>%
       dplyr::select(covariate,
                     term,
@@ -330,29 +330,29 @@ adorn_reg_table_format <- function(tab,
                     signif_adjusted) %>%
       mutate_all(.,
                  list(~ dplyr::if_else(is.na(.), "", .)))
-
-
+    
+    
   }
-
-
+  
+  
   ## Apply labels ----------------
-
+  
   if (!is.null(var_labels)) {
-
+    
     var_labels <- Filter(Negate(is.null), var_labels)
-
+    
     for (i in 1:length(var_labels)) {
-
+      
       tab$covariate <- gsub(paste0("^", names(var_labels[i])),
                             var_labels[[i]],
                             tab$covariate)
     }
-
+    
   }
-
+  
   ## Return table ----------------
-
+  
   tab
-
-
+  
+  
 }
