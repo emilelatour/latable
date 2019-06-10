@@ -27,6 +27,8 @@ Imports:
     tidyr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
+URL: https://github.com/emilelatour/latable
+BugReports: https://github.com/emilelatour/latable/issues
 Suggests: 
     rmarkdown
 VignetteBuilder: knitr
