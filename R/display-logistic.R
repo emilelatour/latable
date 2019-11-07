@@ -162,7 +162,7 @@ display_logistic <- function(fit,
                                                  exponentiate = exponentiate,
                                                  include_last_row = include_last_row))) %>%
     dplyr::select(res_univ) %>%
-    tidyr::unnest()
+    tidyr::unnest(col = res_univ)
 
 
   if (add_multi == TRUE) {
