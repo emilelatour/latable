@@ -292,6 +292,19 @@
   }
   
   
+  ## Padding for p-values ---------------- 
+  
+  tab <- tab %>% 
+    mutate(p = stringr::str_replace(string = p, 
+                                    pattern = "<", 
+                                    replacement = "< ")) %>% 
+    mutate(p = dplyr::if_else(nchar(p) > 0 & stringr::str_detect(string = p, 
+                                                                 pattern = "<", 
+                                                                 negate = TRUE), 
+                              paste0("  ", p), 
+                              p))
+  
+  
   ## End of function ---------------- 
   
   tab <- tab %>% 

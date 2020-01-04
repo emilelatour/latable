@@ -3,7 +3,6 @@
 \docType{package}
 \name{latable}
 \alias{latable}
-\alias{latable-package}
 \title{latable: Tools for making tables of results}
 \description{
 This package contains a variety of helper functions for making tables of

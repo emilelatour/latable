@@ -4,9 +4,17 @@
 \alias{.create_table_one_no_strata}
 \title{Make a Table 1 without strata.}
 \usage{
-.create_table_one_no_strata(data, vars, fct_vars, catDigits = 1,
-  contDigits = 2, pDigits = 3, var_labels = TRUE, nonnormal = NULL,
-  ...)
+.create_table_one_no_strata(
+  data,
+  vars,
+  fct_vars,
+  catDigits = 1,
+  contDigits = 2,
+  pDigits = 3,
+  var_labels = TRUE,
+  nonnormal = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame in which these variables exist. All variables (both

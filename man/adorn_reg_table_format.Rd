@@ -4,8 +4,14 @@
 \alias{adorn_reg_table_format}
 \title{Add formatting to a table of regression results}
 \usage{
-adorn_reg_table_format(tab, digits = 2, pval_fmt = "combo",
-  format = "html", separate_text = " to ", var_labels = NULL)
+adorn_reg_table_format(
+  tab,
+  digits = 2,
+  pval_fmt = "combo",
+  format = "html",
+  separate_text = " to ",
+  var_labels = NULL
+)
 }
 \arguments{
 \item{tab}{A regression table. Data frame or tibble}

@@ -4,9 +4,17 @@
 \alias{display_logistic2}
 \title{Display logistic regression results (given variable names)}
 \usage{
-display_logistic2(data, outcome, predictors, ref_level = NULL,
-  add_multi = FALSE, format = "html", conf_level = 0.95,
-  exponentiate = TRUE, include_last_row = TRUE)
+display_logistic2(
+  data,
+  outcome,
+  predictors,
+  ref_level = NULL,
+  add_multi = FALSE,
+  format = "html",
+  conf_level = 0.95,
+  exponentiate = TRUE,
+  include_last_row = TRUE
+)
 }
 \arguments{
 \item{data}{A tibble or data frame with the full data set.}

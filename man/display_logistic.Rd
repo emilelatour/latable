@@ -4,8 +4,15 @@
 \alias{display_logistic}
 \title{Display logistic regression results (given a model fit)}
 \usage{
-display_logistic(fit, data, add_multi = FALSE, format = "html",
-  conf_level = 0.95, exponentiate = TRUE, include_last_row = TRUE)
+display_logistic(
+  fit,
+  data,
+  add_multi = FALSE,
+  format = "html",
+  conf_level = 0.95,
+  exponentiate = TRUE,
+  include_last_row = TRUE
+)
 }
 \arguments{
 \item{fit}{An object of class \code{glm} inheriting from "glm" which inherits from
