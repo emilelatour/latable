@@ -106,7 +106,8 @@
       janitor::clean_names() %>%
       dplyr::filter(term != "(Intercept)") %>%
       # mutate(term = stringr::str_remove(term, independent),
-      mutate(term = stringr::str_remove_all(term, indep_split),
+      mutate(# term = stringr::str_remove_all(term, indep_split),
+             term = fit$xlevels, 
              ref = NA_character_,
              covariate = "") %>%
       dplyr::select(covariate,
