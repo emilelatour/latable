@@ -97,6 +97,11 @@
                                             "ordered",
                                             "logical",
                                             "character"))) {
+    
+    x_levels <- fit %>% 
+      purrr::pluck(., 
+                   "xlevels", 
+                   1)
 
     res_by_level <- fit %>%
       broom::tidy(.,
@@ -107,7 +112,7 @@
       dplyr::filter(term != "(Intercept)") %>%
       # mutate(term = stringr::str_remove(term, independent),
       mutate(# term = stringr::str_remove_all(term, indep_split),
-             term = fit$xlevels, 
+             term = x_levels, 
              ref = NA_character_,
              covariate = "") %>%
       dplyr::select(covariate,
