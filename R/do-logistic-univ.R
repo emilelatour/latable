@@ -101,7 +101,8 @@
     x_levels <- fit %>% 
       purrr::pluck(., 
                    "xlevels", 
-                   1)
+                   1) %>% 
+      .[-c(1)]
 
     res_by_level <- fit %>%
       broom::tidy(.,
