@@ -43,7 +43,35 @@
 #'   large sample approximation tests (chisq.test).
 #' @param nonnormal A character vector to specify the variables for which the
 #'   p-values should be those of nonparametric tests. By default all p-values
-#'   are from normal assumptionbased tests (oneway.test).
+#'   are from normal assumption based tests (oneway.test).
+#' @param includeNA	If TRUE, NA is handled as a regular factor level rather than
+#'   missing. NA is shown as the last factor level in the table. Only effective
+#'   for categorical variables.
+#' @param testApprox A function used to perform the large sample approximation
+#'   based tests. The default is chisq.test. This is not recommended when some
+#'   of the cell have small counts like fewer than 5.
+#' @param argsApprox A named list of arguments passed to the function specified
+#'   in testApprox. The default is list(correct = TRUE), which turns on the
+#'   continuity correction for chisq.test.
+#' @param testExact A function used to perform the exact tests. The default is
+#'   fisher.test. If the cells have large numbers, it will fail because of
+#'   memory limitation. In this situation, the large sample approximation based
+#'   should suffice.
+#' @param argsExact	A named list of arguments passed to the function specified
+#'   in testExact. The default is list(workspace = 2*10^5), which specifies the
+#'   memory space allocated for fisher.test.
+#' @param testNormal A function used to perform the normal assumption based
+#'   tests. The default is oneway.test. This is equivalent of the t-test when
+#'   there are only two groups.
+#' @param argsNormal A named list of arguments passed to the function specified
+#'   in testNormal. The default is list(var.equal = TRUE), which makes it the
+#'   ordinary ANOVA that assumes equal variance across groups.
+#' @param testNonNormal A function used to perform the nonparametric tests. The
+#'   default is kruskal.test (Kruskal-Wallis Rank Sum Test). This is equivalent
+#'   of the wilcox.test (Man-Whitney U test) when there are only two groups.
+#' @param argsNonNormal	A named list of arguments passed to the function
+#'   specified in testNonNormal. The default is list(NULL), which is just a
+#'   placeholder.
 #' @param ... Optional parameters
 #' 
 #' @import tableone
@@ -58,6 +86,10 @@
 #' @importFrom dplyr row_number
 #' @importFrom dplyr select
 #' @importFrom labelled labelled
+#' @importFrom stats chisq.test
+#' @importFrom stats fisher.test
+#' @importFrom stats kruskal.test
+#' @importFrom stats oneway.test
 #' @importFrom stringr str_detect
 #' @importFrom tibble as_tibble
 #' @importFrom tibble rowid_to_column
@@ -80,7 +112,16 @@
                                      keep_test = FALSE, 
                                      var_labels = TRUE, 
                                      exact = NULL, 
-                                     nonnormal = NULL, ...) { 
+                                     nonnormal = NULL, 
+                                     includeNA = FALSE,
+                                     testApprox = chisq.test,
+                                     argsApprox = list(correct = TRUE),
+                                     testExact = fisher.test,
+                                     argsExact = list(workspace = 2 * 10^5),
+                                     testNormal = oneway.test,
+                                     argsNormal = list(var.equal = TRUE),
+                                     testNonNormal = kruskal.test,
+                                     argsNonNormal = list(NULL),...) { 
   
   
   ## Make the overall table without strata ---------------- 
@@ -89,7 +130,15 @@
   t_0 <- tableone::CreateTableOne(vars = vars, 
                                   data = data, 
                                   factorVars = fct_vars, 
-                                  includeNA = FALSE) %>% 
+                                  includeNA = includeNA, 
+                                  testApprox = testApprox,
+                                  argsApprox = argsApprox,
+                                  testExact = testExact,
+                                  argsExact = argsExact,
+                                  testNormal = testNormal,
+                                  argsNormal = argsNormal, 
+                                  testNonNormal = testNonNormal,
+                                  argsNonNormal = argsNonNormal) %>% 
     print(., 
           showAllLevels = TRUE, 
           printToggle = FALSE, 
@@ -111,7 +160,16 @@
                                   strata = strata, 
                                   data = data, 
                                   factorVars = fct_vars, 
-                                  includeNA = FALSE) %>% 
+                                  includeNA = includeNA,
+                                  test = TRUE,
+                                  testApprox = testApprox,
+                                  argsApprox = argsApprox,
+                                  testExact = testExact,
+                                  argsExact = argsExact,
+                                  testNormal = testNormal,
+                                  argsNormal = argsNormal, 
+                                  testNonNormal = testNonNormal,
+                                  argsNonNormal = argsNonNormal) %>% 
     print(., 
           showAllLevels = TRUE, 
           printToggle = FALSE, 

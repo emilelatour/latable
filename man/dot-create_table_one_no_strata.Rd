@@ -13,6 +13,7 @@
   pDigits = 3,
   var_labels = TRUE,
   nonnormal = NULL,
+  includeNA = FALSE,
   ...
 )
 }
@@ -44,7 +45,11 @@ obtained from \code{labelled::var_label()} function.}
 
 \item{nonnormal}{A character vector to specify the variables for which the
 p-values should be those of nonparametric tests. By default all p-values
-are from normal assumptionbased tests (oneway.test).}
+are from normal assumption based tests (oneway.test).}
+
+\item{includeNA}{If TRUE, NA is handled as a regular factor level rather than
+missing. NA is shown as the last factor level in the table. Only effective
+for categorical variables.}
 
 \item{...}{Optional parameters}
 }

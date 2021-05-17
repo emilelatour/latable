@@ -33,7 +33,10 @@
 #'   obtained from `labelled::var_label()` function.
 #' @param nonnormal A character vector to specify the variables for which the
 #'   p-values should be those of nonparametric tests. By default all p-values
-#'   are from normal assumptionbased tests (oneway.test).
+#'   are from normal assumption based tests (oneway.test).
+#' @param includeNA	If TRUE, NA is handled as a regular factor level rather than
+#'   missing. NA is shown as the last factor level in the table. Only effective
+#'   for categorical variables.
 #' @param ... Optional parameters
 #' 
 #' @import tableone
@@ -66,7 +69,8 @@
                                         contDigits = 2, 
                                         pDigits = 3, 
                                         var_labels = TRUE, 
-                                        nonnormal = NULL, ...) { 
+                                        nonnormal = NULL, 
+                                        includeNA = FALSE,...) { 
   
   
   ## Make the overall table without strata ---------------- 
@@ -75,7 +79,7 @@
   t_0 <- tableone::CreateTableOne(vars = vars, 
                                   data = data, 
                                   factorVars = fct_vars, 
-                                  includeNA = FALSE) %>% 
+                                  includeNA = includeNA) %>% 
     print(., 
           showAllLevels = TRUE, 
           printToggle = FALSE, 
