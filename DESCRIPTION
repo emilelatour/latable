@@ -19,6 +19,7 @@ Imports:
     labelled,
     magrittr, 
     purrr,
+    rlang, 
     stats,
     stringr,
     survival,
