@@ -185,7 +185,8 @@ get_freq <- function(data,
   data %>% 
     tibble::as_tibble() %>% 
     dplyr::count(!! y, 
-                 !! x) %>% 
+                 !! x, 
+                 .drop = FALSE) %>% 
     dplyr::mutate(pct = n / sum(n, na.rm = TRUE)) %>% 
     dplyr::rename("x_level" = !! x, 
                   "y_level" = !! y) %>% 
