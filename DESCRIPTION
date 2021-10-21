@@ -25,9 +25,10 @@ Imports:
     survival,
     tableone,
     tibble,
-    tidyr
+    tidyr, 
+    tidyselect
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 URL: https://github.com/emilelatour/latable
 BugReports: https://github.com/emilelatour/latable/issues
 Suggests: 

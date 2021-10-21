@@ -95,6 +95,7 @@
 #' @importFrom tibble rowid_to_column
 #' @importFrom tibble rownames_to_column
 #' @importFrom tibble tibble
+#' @importFrom tidyselect all_of
 #'
 #' @return A tbl_df
 #' 
@@ -210,29 +211,27 @@
   tab <- t_0 %>% 
     dplyr::left_join(., 
                      t_1, 
-                     by = c("row_id", "Category", "level")) %>% 
-    dplyr::select(-row_id)
+                     by = c("row_id", "Category", "level"))
   
   
   ## Join number not missing with tab ---------------- 
   
   tab <- tab %>% 
-    dplyr::select(Category) %>% 
+    dplyr::select(Category, row_id) %>% 
     dplyr::filter(Category != "", 
                   Category != "n") %>% 
-    dplyr::pull() %>% 
-    tibble::tibble(Category = ., 
-                   num_not_miss = num_not_miss) %>% 
+    mutate(num_not_miss = num_not_miss) %>% 
     dplyr::left_join(tab, 
                      ., 
-                     by = "Category") %>% 
+                     by = c("Category", "row_id")) %>% 
     mutate(num_not_miss = dplyr::if_else(is.na(num_not_miss), 
                                          "", 
                                          as.character(num_not_miss))) %>% 
     dplyr::select(Category, 
                   level, 
                   num_not_miss, 
-                  dplyr::everything())
+                  dplyr::everything(), 
+                  -row_id)
   
   
   ## Keep test or not ---------------- 
@@ -346,7 +345,7 @@
                                                -test, 
                                                -SMD),
                          by = "index") %>%
-        dplyr::select(cols_to_keep, -index)
+        dplyr::select(tidyselect::all_of(cols_to_keep), -index)
       
     }
   }

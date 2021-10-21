@@ -63,6 +63,7 @@
 #' @importFrom tibble rowid_to_column
 #' @importFrom tibble rownames_to_column
 #' @importFrom tibble tibble
+#' @importFrom tidyselect all_of
 #'
 #' @return A tbl_df
 #' 
@@ -286,7 +287,7 @@
                                                -test, 
                                                -SMD),
                          by = "index") %>%
-        dplyr::select(cols_to_keep, -index)
+        dplyr::select(tidyselect::all_of(cols_to_keep), -index)
       
     }
   }

@@ -92,6 +92,8 @@ check_low_freq <- function(fit,
                            data, 
                            threshold = 0.01) {
   
+  freq_tab <- pct <- y <- x <- n <- NULL
+  
   if (length(class(fit)) == 1) {
     stop("Model not from logistic regression")
   }
@@ -141,6 +143,8 @@ check_low_freq2 <- function(data,
                             predictors, 
                             threshold = 0.01) {
   
+  freq_tab <- pct <- y <- x <- n <- NULL
+  
   df <- data
   
   class_check <- purrr::map_lgl(.x = predictors, 
@@ -177,6 +181,8 @@ check_low_freq2 <- function(data,
 get_freq <- function(data, 
                      y, 
                      x) { 
+  
+  n <- x_level <- y_level <- pct <- NULL
   
   x <- rlang::sym(x)
   y <- rlang::sym(y)
