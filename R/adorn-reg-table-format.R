@@ -24,6 +24,7 @@
 #' @importFrom dplyr mutate_at
 #' @importFrom dplyr select
 #' @importFrom labelled var_label
+#' @importFrom stringr str_detect
 #'
 #' @return A tibble or data frame
 #' @export
@@ -127,10 +128,16 @@ adorn_reg_table_format <- function(tab,
       stop('pval_fmt must be one of: "combo", "lrt", "wald", "all"')
     }
   
+  #### Check if multivariable or univariable results -------------------------------- 
+  
+  # is_multi <- !(length(names(tab)) == 9)
+  
+  is_multi <- any(stringr::str_detect(names(tab), "adjusted"))
+  
   
   #### Start function -------------------------------- 
   
-  if (length(names(tab)) == 9) {
+  if (!is_multi) {
     
     
     ## Combine/select p-values ----------------
@@ -205,7 +212,7 @@ adorn_reg_table_format <- function(tab,
                  list(~ dplyr::if_else(is.na(.), "", .)))
     
     
-  } else if (length(names(tab)) == 15) {
+  } else if (is_multi) {
     
     
     ## Combine/select p-values ----------------
