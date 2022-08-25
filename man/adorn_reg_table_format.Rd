@@ -20,8 +20,8 @@ adorn_reg_table_format(
 
 \item{pval_fmt}{Which p-value to show. Options are (1) "combo", default,
 which shows the LRT and Wald but only if there is more than one level, (2)
-"all" shows LRT and Wald no matter what, (3) "LRT" shows just the LRT
-p-value, (4) "Wald" shows just the Wald p-value.}
+"all" shows LRT and Wald no matter what, (3) "lrt" shows just the LRT
+p-value, (4) "wald" shows just the Wald p-value.}
 
 \item{format}{Doesn't do anything right now. Place holder for later. Default
 is "html".}

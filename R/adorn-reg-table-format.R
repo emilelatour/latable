@@ -9,8 +9,8 @@
 #' @param digits Integer; number of digits to display (default is 2)
 #' @param pval_fmt Which p-value to show. Options are (1) "combo", default,
 #'   which shows the LRT and Wald but only if there is more than one level, (2)
-#'   "all" shows LRT and Wald no matter what, (3) "LRT" shows just the LRT
-#'   p-value, (4) "Wald" shows just the Wald p-value.
+#'   "all" shows LRT and Wald no matter what, (3) "lrt" shows just the LRT
+#'   p-value, (4) "wald" shows just the Wald p-value.
 #' @param format Doesn't do anything right now. Place holder for later. Default
 #'   is "html".
 #' @param separate_text Text to use in confidence intervals. Default is " to ".
@@ -121,6 +121,14 @@ adorn_reg_table_format <- function(tab,
     
     
     ## Combine/select p-values ----------------
+    
+    pval_fmt <- tolower(pval_fmt)
+    
+    if (!pval_fmt %in% c("combo", "lrt", "wald", "all")) {
+      
+      stop('pval_fmt must be one of: "combo", "lrt", "wald", "all"')
+    }
+    
     
     if (pval_fmt == "combo") {
       
