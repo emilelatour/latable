@@ -2,6 +2,7 @@
 % Please edit documentation in R/latable.R
 \docType{package}
 \name{latable}
+\alias{latable-package}
 \alias{latable}
 \title{latable: Tools for making tables of results}
 \description{
@@ -11,5 +12,17 @@ results easily.
 \examples{
 # Example usage:
 library(latable)
+
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/emilelatour/latable}
+  \item Report bugs at \url{https://github.com/emilelatour/latable/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Emile Latour \email{latour@ohsu.edu}
 
 }

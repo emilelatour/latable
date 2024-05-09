@@ -278,6 +278,13 @@ flex_print_table_one <- function(x,
       align_j <- c(1:length(align))
     }
     
+    # "left", "center", "right", "justify"
+    align <- dplyr::case_match(align,
+                               "l" ~ "left",
+                               "c" ~ "center",
+                               "r" ~ "right",
+                               "j" ~ "justify") 
+    
     if (n_strata != 0) {
       x <- x |>
         flextable::align(j = align_j,
