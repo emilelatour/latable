@@ -49,6 +49,7 @@ if (getRversion() >= "2.15.1") {
       "p_value_wald_adjusted",
       "p_value_wald_unadjusted",
       "pr_chisq",
+      "pr_f", 
       "ref",
       "res_univ",
       "row_id",
