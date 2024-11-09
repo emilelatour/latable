@@ -1,5 +1,7 @@
+#' @title
 #' latable: Tools for making tables of results
 #'
+#' @description
 #' This package contains a variety of helper functions for making tables of
 #' results easily.
 #'
@@ -7,9 +9,8 @@
 #' # Example usage:
 #' library(latable)
 #'
-#' @docType package
-#' @name latable
-NULL
+#' @keywords internal
+"_PACKAGE"
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines
 ## From Jenny Bryan's googlesheets package
