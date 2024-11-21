@@ -24,6 +24,7 @@
 #' @importFrom dplyr mutate_at
 #' @importFrom dplyr select
 #' @importFrom labelled var_label
+#' @importFrom purrr map_chr
 #' @importFrom stringr str_detect
 #'
 #' @return A tibble or data frame
@@ -122,11 +123,11 @@ adorn_reg_table_format <- function(tab,
   #### Check the pval_fmt is acceptable -------------------------------- 
   
   pval_fmt <- tolower(pval_fmt)
+  
+  if (!pval_fmt %in% c("combo", "lrt", "wald", "all")) {
     
-    if (!pval_fmt %in% c("combo", "lrt", "wald", "all")) {
-      
-      stop('pval_fmt must be one of: "combo", "lrt", "wald", "all"')
-    }
+    stop('pval_fmt must be one of: "combo", "lrt", "wald", "all"')
+  }
   
   #### Check if multivariable or univariable results -------------------------------- 
   
@@ -361,14 +362,11 @@ adorn_reg_table_format <- function(tab,
     
     var_labels <- Filter(Negate(is.null), var_labels)
     
-    for (i in 1:length(var_labels)) {
-      
-      tab$covariate <- gsub(paste0("^", names(var_labels[i])),
-                            var_labels[[i]],
-                            tab$covariate)
-    }
+    tab$covariate <- purrr::map_chr(.x = tab$covariate, 
+                                    .f = ~ var_labels[[.]] %||% .)
     
   }
+  
   
   ## Return table ----------------
   
