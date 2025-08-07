@@ -34,20 +34,20 @@ display_linear <- function(fit,
                            format = "html",
                            conf_level = 0.95,
                            include_last_row = TRUE) {
-
+  
   if (!(inherits(fit, "lm") || (inherits(fit, "glm") && fit$family$family == "gaussian"))) {
     stop("Model not from linear regression")
   }
-
+  
   predictors <- attr(fit$terms, "term.labels")
   outcome <- names(fit$model)[1]
-
-
+  
+  
   ## Get the data set ----------------
-
+  
   df <- data
-
-
+  
+  
   ## Univariable results ----------------
   uni_res <- tidyr::crossing(outcome,
                              predictors) %>%
@@ -59,19 +59,19 @@ display_linear <- function(fit,
            res_univ =
              purrr::map(.x = formula,
                         .f = ~ .do_linear_univ(data = df,
-                                                 formula = .x,
-                                                 format = format,
-                                                 conf_level = conf_level,
-                                                 include_last_row = include_last_row))) %>%
+                                               formula = .x,
+                                               format = format,
+                                               conf_level = conf_level,
+                                               include_last_row = include_last_row))) %>%
     dplyr::select(res_univ) %>%
     tidyr::unnest(col = res_univ)
-
-
+  
+  
   if (add_multi == TRUE) {
-
+    
     ## Multivariable results ----------------
-
-
+    
+    
     multi_res <- fit %>%
       broom::tidy(.,
                   conf.int = TRUE,
@@ -82,7 +82,7 @@ display_linear <- function(fit,
                     lower_ci_adjusted = conf_low,
                     upper_ci_adjusted = conf_high,
                     p_value_wald_adjusted = p_value)
-
+    
     multi_res_lrt <- car::Anova(fit,
                                 test.statistic = "F") %>%
       as.data.frame() %>%
@@ -91,10 +91,10 @@ display_linear <- function(fit,
       janitor::clean_names() %>%
       dplyr::select(covariate = rowname,
                     p_value_lrt_adjusted = pr_f)
-
-
+    
+    
     ## Combine to univariable results ----------------
-
+    
     res <- uni_res %>%
       mutate(
         names_to_match = dplyr::na_if(covariate, ""),
@@ -126,15 +126,15 @@ display_linear <- function(fit,
                     p_value_wald_unadjusted = p_value_wald,
                     p_value_lrt_unadjusted = p_value_lrt,
                     signif_unadjusted = signif)
-
+    
   } else {
-
+    
     res <- uni_res
-
+    
   }
-
+  
   res
-
+  
 }
 
 
@@ -174,30 +174,33 @@ display_linear <- function(fit,
                             format = "html",
                             conf_level = 0.95,
                             include_last_row = TRUE, ...) {
-
-
+  
+  
   #### Fit the model --------------------------------
-
+  
   fit <- glm(formula = as.formula(formula),
              family = gaussian(link = "identity"),
              data = data)
-
+  
   # independent <- attr(fit$terms, "term.labels")[[1]]
   independent <- attr(fit$terms, "term.labels")
   outcome <- names(fit$model)[1]
-
+  
   indep_split <- unlist(stringr::str_split(independent, ":"))
   indep_split <- paste0(indep_split, collapse = "|")
-
+  
   #### Overall p-value --------------------------------
-
-  f_stat_pval <- summary(fit)$fstatistic
-  lrt_pval <- if (!is.null(f_stat_pval)) {
-    pf(f_stat_pval[1], f_stat_pval[2], f_stat_pval[3], lower.tail = FALSE)
-  } else {
-    NA_real_
-  }
-
+  
+  # f_stat_pval <- summary(fit)$fstatistic
+  # lrt_pval <- if (!is.null(f_stat_pval)) {
+  #   pf(f_stat_pval[1], f_stat_pval[2], f_stat_pval[3], lower.tail = FALSE)
+  # } else {
+  #   NA_real_
+  # }
+  
+  lrt_pval <- car::Anova(fit, 
+                         test.statistic = "LR")
+  
   res_overall <- tibble::tibble(
     covariate = independent,
     term = NA_character_,
@@ -209,9 +212,9 @@ display_linear <- function(fit,
     p_value_lrt = lrt_pval,
     signif = .calc_sig_ind(p_value_lrt, format)
   )
-
+  
   #### Results by level --------------------------------
-
+  
   if (any(class(data[[independent]]) %in% c("factor",
                                             "ordered",
                                             "logical",
@@ -222,7 +225,7 @@ display_linear <- function(fit,
                    "xlevels", 
                    1) %>% 
       .[-c(1)]
-
+    
     res_by_level <- fit %>%
       broom::tidy(.,
                   conf.int = TRUE,
@@ -231,9 +234,9 @@ display_linear <- function(fit,
       dplyr::filter(term != "(Intercept)") %>%
       # mutate(term = stringr::str_remove(term, independent),
       mutate(# term = stringr::str_remove_all(term, indep_split),
-             term = x_levels, 
-             ref = NA_character_,
-             covariate = "") %>%
+        term = x_levels, 
+        ref = NA_character_,
+        covariate = "") %>%
       dplyr::select(covariate,
                     term,
                     estimate,
@@ -242,9 +245,9 @@ display_linear <- function(fit,
                     p_value_wald = p_value) %>%
       mutate(p_value_lrt = NA_real_,
              signif = .calc_sig_ind(p_value_wald, format))
-
+    
     fct_ref_lev <- levels(data[[independent]])[[1]]
-
+    
     row_one <- tibble::tibble(
       covariate = NA_character_,
       # term = as.character(glue::glue("Ref lvl = {fct_ref_lev}")),
@@ -256,13 +259,13 @@ display_linear <- function(fit,
       p_value_wald = NA_real_,
       p_value_lrt = NA_real_,
       signif = NA_character_)
-
+    
     res_by_level <- dplyr::bind_rows(row_one,
                                      res_by_level)
-
+    
   } else if (any(stringr::str_detect(independent, ":"))) {
-
-
+    
+    
     res_by_level <- fit %>%
       broom::tidy(.,
                   conf.int = TRUE,
@@ -281,10 +284,10 @@ display_linear <- function(fit,
                     p_value_wald = p_value) %>%
       mutate(p_value_lrt = NA_real_,
              signif = .calc_sig_ind(p_value_wald, format))
-
+    
     # fct_ref_lev <- levels(data[[independent]])[[1]]
     fct_ref_lev <- "TBD"
-
+    
     row_one <- tibble::tibble(
       covariate = NA_character_,
       # term = as.character(glue::glue("Ref lvl = {fct_ref_lev}")),
@@ -296,12 +299,12 @@ display_linear <- function(fit,
       p_value_wald = NA_real_,
       p_value_lrt = NA_real_,
       signif = NA_character_)
-
+    
     res_by_level <- dplyr::bind_rows(row_one,
                                      res_by_level)
-
+    
   } else {
-
+    
     res_by_level <- fit %>%
       broom::tidy(.,
                   conf.int = TRUE,
@@ -320,15 +323,15 @@ display_linear <- function(fit,
                     p_value_wald = p_value) %>%
       mutate(p_value_lrt = NA_real_,
              signif = .calc_sig_ind(p_value_wald, format))
-
+    
   }
-
-
-
+  
+  
+  
   #### Combine results --------------------------------
-
+  
   if (include_last_row == TRUE) {
-
+    
     last_row <- tibble::tibble(
       covariate = NA_character_,
       term = NA_character_,
@@ -339,22 +342,22 @@ display_linear <- function(fit,
       p_value_wald = NA_real_,
       p_value_lrt = NA_real_,
       signif = NA_character_)
-
+    
     res <- dplyr::bind_rows(
       res_overall,
       res_by_level,
       last_row)
-
+    
   } else {
-
+    
     res <- dplyr::bind_rows(
       res_overall,
       res_by_level)
-
+    
   }
-
+  
   res
-
+  
 }
 
 
@@ -415,7 +418,7 @@ display_linear2 <- function(data,
                             format = "html",
                             conf_level = 0.95,
                             include_last_row = TRUE) {
-
+  
   ## Make the regression formula ----------------
   lhs <- glue::glue("{outcome}")
   rhs <- paste(predictors, collapse = " + ")
@@ -424,9 +427,9 @@ display_linear2 <- function(data,
   ## Use the full data set ----------------
   df <- data
   pred_lvls <- predictors
-
+  
   ## Univariable results ----------------
-
+  
   uni_res <- tidyr::crossing(outcome,
                              predictors) %>%
     mutate(predictors = factor(predictors,
@@ -437,24 +440,24 @@ display_linear2 <- function(data,
            res_univ =
              purrr::map(.x = formula,
                         .f = ~ .do_linear_univ(data = df,
-                                                 formula = .x,
-                                                 format = format,
-                                                 conf_level = conf_level,
-                                                 include_last_row = include_last_row))) %>%
+                                               formula = .x,
+                                               format = format,
+                                               conf_level = conf_level,
+                                               include_last_row = include_last_row))) %>%
     dplyr::select(res_univ) %>%
     tidyr::unnest(cols = res_univ)
-
-
+  
+  
   if (add_multi == TRUE) {
-
+    
     ## Fit the model ----------------
-
+    
     fit <- glm(formula = as.formula(form),
                family = gaussian(link = "identity"),
                data = df)
-
+    
     ## Multivariable results ----------------
-
+    
     multi_res <- fit %>%
       broom::tidy(.,
                   conf.int = TRUE,
@@ -465,7 +468,7 @@ display_linear2 <- function(data,
                     lower_ci_adjusted = conf_low,
                     upper_ci_adjusted = conf_high,
                     p_value_wald_adjusted = p_value)
-
+    
     multi_res_lrt <- car::Anova(fit,
                                 test.statistic = "F") %>%
       as.data.frame() %>%
@@ -474,10 +477,10 @@ display_linear2 <- function(data,
       janitor::clean_names() %>%
       dplyr::select(covariate = rowname,
                     p_value_lrt_adjusted = pr_f)
-
-
+    
+    
     ## Combine to univariable results ----------------
-
+    
     res <- uni_res %>%
       mutate(
         names_to_match = dplyr::na_if(covariate, ""),
@@ -509,12 +512,12 @@ display_linear2 <- function(data,
                     p_value_wald_unadjusted = p_value_wald,
                     p_value_lrt_unadjusted = p_value_lrt,
                     signif_unadjusted = signif)
-
+    
   } else {
-
+    
     res <- uni_res
   }
-
+  
   res
-
+  
 }
