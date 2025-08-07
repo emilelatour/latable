@@ -199,7 +199,8 @@ display_linear <- function(fit,
   # }
   
   lrt_pval <- car::Anova(fit, 
-                         test.statistic = "LR")
+                         test.statistic = "LR") |> 
+  purrr::pluck("Pr(>Chisq)")
   
   res_overall <- tibble::tibble(
     covariate = independent,
