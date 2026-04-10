@@ -95,13 +95,18 @@ display_coxph <- function(fit, data, add_multi = FALSE, format = "html", conf_le
     }
     
     
-    # Likelihood ratio test
-    multi_res_lrt <- anova(fit, test = "Chisq") %>%
-      as.data.frame() %>%
-      tibble::rownames_to_column(var = "covariate") %>%
-      janitor::clean_names() %>%
-      dplyr::select(covariate, p_value_lrt_adjusted = pr_chi) |> 
-      dplyr::filter(!is.null(covariate))
+    # Likelihood ratio test (Type III — each term dropped from full model)
+    # drop1() gives Type III LRT (each term tested against full model).
+    # anova() is sequential (Type I) and would replicate univariable p-values
+    # for terms entered first, regardless of model order.
+    suppressWarnings(
+      multi_res_lrt <- drop1(fit, test = "Chisq") %>%
+        as.data.frame() %>%
+        tibble::rownames_to_column(var = "covariate") %>%
+        janitor::clean_names() %>%
+        dplyr::select(covariate, p_value_lrt_adjusted = pr_chi) %>%
+        dplyr::filter(covariate != "<none>")
+    )
     
     ## Combine results
     res <- uni_res %>%
@@ -392,7 +397,7 @@ display_coxph <- function(fit, data, add_multi = FALSE, format = "html", conf_le
 #' @importFrom stats as.formula
 #' @importFrom survival coxph Surv
 #' @importFrom tidyr crossing unnest
-#' @importFrom stats alias anova
+#' @importFrom stats alias
 #'
 #' @return A tibble containing Cox regression results.
 #'
@@ -474,15 +479,16 @@ display_coxph2 <- function(data,
               paste(aliased_terms, collapse = ", "))
     }
     
-    # Likelihood ratio test
-    suppressWarnings(
-      multi_res_lrt <- anova(fit, test = "Chisq") %>%
-        as.data.frame() %>%
-        tibble::rownames_to_column(var = "covariate") %>%
-        janitor::clean_names() %>%
-        dplyr::select(covariate, p_value_lrt_adjusted = pr_chi) |> 
-        dplyr::filter(!is.null(covariate))
-    )
+    # Likelihood ratio test (Type III — each term dropped from full model)
+    # drop1() gives Type III LRT (each term tested against full model).
+    # anova() is sequential (Type I) and would replicate univariable p-values
+    # for terms entered first, regardless of model order.
+    multi_res_lrt <- drop1(fit, test = "Chisq") %>%
+      as.data.frame() %>%
+      tibble::rownames_to_column(var = "covariate") %>%
+      janitor::clean_names() %>%
+      dplyr::select(covariate, p_value_lrt_adjusted = pr_chi) %>%
+      dplyr::filter(covariate != "<none>")
     
     ## Combine with univariable results
     res <- uni_res %>%
