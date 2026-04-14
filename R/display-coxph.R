@@ -134,12 +134,9 @@ display_coxph <- function(fit,
     model_vars   <- all.vars(fit$formula)
     data_complete <- df[complete.cases(df[, intersect(model_vars, names(df))]), ]
 
-    if (!is.null(id)) {
-      fit_cc <- coxph(fit$formula, data = data_complete,
-                      id = get(id, envir = as.environment(data_complete)))
-    } else {
-      fit_cc <- coxph(fit$formula, data = data_complete)
-    }
+    call_args_cc <- list(formula = fit$formula, data = data_complete)
+    if (!is.null(id)) call_args_cc$id <- as.symbol(id)
+    fit_cc <- do.call(coxph, call_args_cc)
 
     suppressWarnings(
       multi_res_lrt <- drop1(fit_cc, test = "Chisq") %>%
@@ -178,7 +175,8 @@ display_coxph <- function(fit,
         upper_ci_unadjusted    = upper_ci,
         p_value_wald_unadjusted = p_value_wald,
         p_value_lrt_unadjusted  = p_value_lrt
-      )
+      ) %>%
+      dplyr::select(-names_to_match)
 
   } else {
     res <- uni_res
@@ -234,11 +232,10 @@ display_coxph <- function(fit,
   #### Fit the model --------------------------------
 
   # Build coxph call — pass id for counting process data if provided
-  if (!is.null(id)) {
-    fit <- coxph(as.formula(formula), data = data, id = get(id, envir = as.environment(data)))
-  } else {
-    fit <- coxph(as.formula(formula), data = data)
-  }
+  # Use do.call to correctly handle id as a symbol (coxph uses NSE for id)
+  call_args <- list(formula = as.formula(formula), data = data)
+  if (!is.null(id)) call_args$id <- as.symbol(id)
+  fit <- do.call(coxph, call_args)
 
   independent <- attr(fit$terms, "term.labels")
   # Remove any strata terms that sneak through (shouldn't happen in univariable
@@ -308,7 +305,11 @@ display_coxph <- function(fit,
                                 .f = ~ .calc_sig_ind(.x, format))
       )
 
-    fct_ref_lev <- levels(data[[independent]])[[1]]
+    fct_ref_lev <- if (is.factor(data[[independent]])) {
+      levels(data[[independent]])[[1]]
+    } else {
+      sort(unique(data[[independent]][!is.na(data[[independent]])]))[1]
+    }
 
     row_one <- tibble::tibble(
       covariate    = NA_character_,
@@ -528,12 +529,9 @@ display_coxph2 <- function(data,
   if (add_multi == TRUE) {
 
     # Fit full model including strata terms, with id if provided
-    if (!is.null(id)) {
-      fit <- coxph(as.formula(form), data = data,
-                   id = get(id, envir = as.environment(data)))
-    } else {
-      fit <- coxph(as.formula(form), data = data)
-    }
+    call_args <- list(formula = as.formula(form), data = data)
+    if (!is.null(id)) call_args$id <- as.symbol(id)
+    fit <- do.call(coxph, call_args)
 
     # Tidy — filter out strata rows which have no coefficient
     multi_res <- fit %>%
@@ -569,12 +567,9 @@ display_coxph2 <- function(data,
     model_vars    <- all.vars(as.formula(form))
     data_complete <- data[complete.cases(data[, intersect(model_vars, names(data))]), ]
 
-    if (!is.null(id)) {
-      fit_cc <- coxph(as.formula(form), data = data_complete,
-                      id = get(id, envir = as.environment(data_complete)))
-    } else {
-      fit_cc <- coxph(as.formula(form), data = data_complete)
-    }
+    call_args_cc <- list(formula = as.formula(form), data = data_complete)
+    if (!is.null(id)) call_args_cc$id <- as.symbol(id)
+    fit_cc <- do.call(coxph, call_args_cc)
 
     suppressWarnings(
       multi_res_lrt <- drop1(fit_cc, test = "Chisq") %>%
@@ -613,7 +608,8 @@ display_coxph2 <- function(data,
         upper_ci_unadjusted     = upper_ci,
         p_value_wald_unadjusted = p_value_wald,
         p_value_lrt_unadjusted  = p_value_lrt
-      )
+      ) %>%
+      dplyr::select(-names_to_match)
 
   } else {
     res <- uni_res
