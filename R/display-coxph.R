@@ -27,8 +27,8 @@
 #' @importFrom purrr map
 #' @importFrom tidyr crossing unnest
 #' @importFrom janitor clean_names
-#' @importFrom stats alias
 #' @importFrom stringr str_detect str_extract
+#' @importFrom stats alias complete.cases
 #'
 #' @return A tibble containing the Cox regression results.
 #'
@@ -128,9 +128,21 @@ display_coxph <- function(fit,
       )
     }
 
-    # Type III LRT via drop1() — works correctly with stratified models
+    # Type III LRT via drop1() — requires complete cases to avoid row-count
+    # mismatch errors when missingness differs across variables. Refit on the
+    # same complete-case subset that coxph used internally.
+    model_vars   <- all.vars(fit$formula)
+    data_complete <- df[complete.cases(df[, intersect(model_vars, names(df))]), ]
+
+    if (!is.null(id)) {
+      fit_cc <- coxph(fit$formula, data = data_complete,
+                      id = get(id, envir = as.environment(data_complete)))
+    } else {
+      fit_cc <- coxph(fit$formula, data = data_complete)
+    }
+
     suppressWarnings(
-      multi_res_lrt <- drop1(fit, test = "Chisq") %>%
+      multi_res_lrt <- drop1(fit_cc, test = "Chisq") %>%
         as.data.frame() %>%
         tibble::rownames_to_column(var = "covariate") %>%
         janitor::clean_names() %>%
@@ -439,6 +451,7 @@ display_coxph <- function(fit,
 #' @importFrom survival coxph
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr crossing unnest
+#' @importFrom stats alias complete.cases as.formula
 #'
 #' @return A tibble containing Cox regression results.
 #'
@@ -550,9 +563,21 @@ display_coxph2 <- function(data,
       )
     }
 
-    # Type III LRT — drop1 handles stratified models correctly
+    # Type III LRT via drop1() — requires complete cases to avoid row-count
+    # mismatch errors when missingness differs across variables. Refit on the
+    # same complete-case subset that coxph used internally.
+    model_vars    <- all.vars(as.formula(form))
+    data_complete <- data[complete.cases(data[, intersect(model_vars, names(data))]), ]
+
+    if (!is.null(id)) {
+      fit_cc <- coxph(as.formula(form), data = data_complete,
+                      id = get(id, envir = as.environment(data_complete)))
+    } else {
+      fit_cc <- coxph(as.formula(form), data = data_complete)
+    }
+
     suppressWarnings(
-      multi_res_lrt <- drop1(fit, test = "Chisq") %>%
+      multi_res_lrt <- drop1(fit_cc, test = "Chisq") %>%
         as.data.frame() %>%
         tibble::rownames_to_column(var = "covariate") %>%
         janitor::clean_names() %>%
