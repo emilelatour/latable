@@ -75,9 +75,15 @@ display_coxph <- function(fit,
   df <- data
 
   ## Univariable results — strata terms excluded, id passed through
+  # Capture model order before crossing() alphabetizes
+  pred_order <- predictors
+
   uni_res <- tidyr::crossing(outcome, predictors) %>%
     mutate(
-      predictors = factor(predictors, levels = predictors),
+      predictors = factor(predictors, levels = pred_order)
+    ) %>%
+    dplyr::arrange(predictors) %>%          # sort by factor = model order
+    mutate(
       predictors = as.character(predictors),
       formula    = glue::glue("{outcome} ~ {predictors}"),
       res_univ   = purrr::map(
@@ -175,8 +181,7 @@ display_coxph <- function(fit,
         upper_ci_unadjusted    = upper_ci,
         p_value_wald_unadjusted = p_value_wald,
         p_value_lrt_unadjusted  = p_value_lrt
-      ) %>%
-      dplyr::select(-names_to_match)
+      )
 
   } else {
     res <- uni_res
@@ -305,11 +310,7 @@ display_coxph <- function(fit,
                                 .f = ~ .calc_sig_ind(.x, format))
       )
 
-    fct_ref_lev <- if (is.factor(data[[independent]])) {
-      levels(data[[independent]])[[1]]
-    } else {
-      sort(unique(data[[independent]][!is.na(data[[independent]])]))[1]
-    }
+    fct_ref_lev <- levels(data[[independent]])[[1]]
 
     row_one <- tibble::tibble(
       covariate    = NA_character_,
@@ -505,7 +506,10 @@ display_coxph2 <- function(data,
   suppressWarnings(
     uni_res <- tidyr::crossing(outcome, predictors = uni_predictors) %>%
       mutate(
-        predictors = factor(predictors, levels = uni_predictors),
+        predictors = factor(predictors, levels = uni_predictors)
+      ) %>%
+      dplyr::arrange(predictors) %>%          # sort by factor = model order
+      mutate(
         predictors = as.character(predictors),
         formula    = paste(outcome, "~", predictors),
         res_univ   = purrr::map(
@@ -608,8 +612,7 @@ display_coxph2 <- function(data,
         upper_ci_unadjusted     = upper_ci,
         p_value_wald_unadjusted = p_value_wald,
         p_value_lrt_unadjusted  = p_value_lrt
-      ) %>%
-      dplyr::select(-names_to_match)
+      )
 
   } else {
     res <- uni_res
