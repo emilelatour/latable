@@ -7,6 +7,7 @@
 .do_coxph_univ(
   data,
   formula,
+  id = NULL,
   format = "html",
   conf_level = 0.95,
   exponentiate = TRUE,
@@ -15,33 +16,27 @@
 )
 }
 \arguments{
-\item{data}{A tibble or data frame containing the full dataset used for modeling.}
+\item{data}{A tibble or data frame.}
 
-\item{formula}{A character string representing the model formula (e.g., "Surv(time, status) ~ age").}
+\item{formula}{Character string model formula.}
 
-\item{format}{Display format in case characters need escaping. Placeholder for future use. Default is \code{"html"}.}
+\item{id}{Optional. Character string naming the cluster/subject ID variable.}
 
-\item{conf_level}{The confidence level to use for confidence intervals. Must be between 0 and 1. Default is 0.95.}
+\item{format}{Display format. Default is \code{"html"}.}
 
-\item{exponentiate}{Logical; whether to exponentiate coefficient estimates to show hazard ratios. Default is \code{TRUE}.}
+\item{conf_level}{Confidence level. Default is \code{0.95}.}
 
-\item{include_last_row}{Logical; if \code{TRUE}, adds a blank row at the end for spacing. Default is \code{TRUE}.}
+\item{exponentiate}{Logical. Default is \code{TRUE}.}
 
-\item{test}{Type of overall test to perform Likelihood ratio test ("LRT"), Wald test ("Wald"), Score (logrank) test ("Score").}
+\item{include_last_row}{Logical. Default is \code{TRUE}.}
+
+\item{test}{Overall p-value type: \code{"LRT"}, \code{"Wald"}, or \code{"Score"}.}
 }
 \value{
-A tibble with the univariable Cox regression results for the specified predictor.
+A tibble with univariable Cox results for the specified predictor.
 }
 \description{
-A helper function to perform univariable Cox proportional hazards regression and
-extract results in a presentation-ready format.
-}
-\examples{
-\dontrun{
-library(survival)
-data(lung)
-
-# Perform univariable Cox regression on a single predictor
-.do_coxph_univ(data = lung, formula = "Surv(time, status) ~ age")
-}
+Internal helper. Fits a univariable Cox model and returns results in a
+presentation-ready tibble. Handles continuous, categorical, and interaction
+terms. Passes \code{id} through for counting process / time-varying data.
 }

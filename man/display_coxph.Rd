@@ -7,6 +7,7 @@
 display_coxph(
   fit,
   data,
+  id = NULL,
   add_multi = FALSE,
   format = "html",
   conf_level = 0.95,
@@ -15,37 +16,49 @@ display_coxph(
 )
 }
 \arguments{
-\item{fit}{An object of class \code{coxph} from the \code{survival} package, representing a Cox proportional hazards model.}
+\item{fit}{An object of class \code{coxph} from the \code{survival} package.}
 
 \item{data}{A tibble or data frame with the full dataset used for modeling.}
 
-\item{add_multi}{Logical; whether to include multivariable results. Default is \code{FALSE}.}
+\item{id}{Optional. Character string naming the cluster/subject ID variable
+for counting process (time-varying) models. Passed to \code{coxph()} for
+correct robust variance estimation. Default is \code{NULL}.}
 
-\item{format}{Display format in case characters need escaping. Placeholder for future use. Default is \code{"html"}.}
+\item{add_multi}{Logical; whether to include multivariable results. Default
+is \code{FALSE}.}
 
-\item{conf_level}{The confidence level to use for confidence intervals. Must be between 0 and 1. Default is 0.95.}
+\item{format}{Display format. Default is \code{"html"}.}
 
-\item{exponentiate}{Logical; whether to exponentiate coefficient estimates to show hazard ratios. Default is \code{TRUE}.}
+\item{conf_level}{Confidence level for intervals. Default is \code{0.95}.}
 
-\item{include_last_row}{Logical; if \code{TRUE}, adds a blank row at the end for spacing. Default is \code{TRUE}.}
+\item{exponentiate}{Logical; exponentiate estimates to HRs. Default is \code{TRUE}.}
+
+\item{include_last_row}{Logical; add blank spacing row. Default is \code{TRUE}.}
 }
 \value{
 A tibble containing the Cox regression results.
 }
 \description{
-Given a \code{coxph} model fit object, displays univariable and (optionally) multivariable results
-from Cox proportional hazards regression in a format suitable for presentation.
+Given a \code{coxph} model fit object, displays univariable and (optionally)
+multivariable results from Cox proportional hazards regression in a format
+suitable for presentation.
+
+Handles stratified models (e.g., \code{strata(var)}) and counting process data
+(e.g., \code{Surv(tstart, tstop, event)}) with an optional \code{id} argument for
+correct variance estimation.
 }
 \examples{
 \dontrun{
 library(survival)
 data(lung)
 
-# Fit a Cox model
-fit <- coxph(Surv(time, status) ~ age + sex + ph.ecog, data = lung)
-
-# Display Cox regression results
+fit <- coxph(Surv(time, status) ~ age + sex + strata(ph.ecog), data = lung)
 display_coxph(fit, data = lung, add_multi = TRUE)
+
+# Counting process / time-varying exposure
+fit_tv <- coxph(Surv(tstart, tstop, event) ~ trt + strata(grp),
+                data = df, id = subject_id)
+display_coxph(fit_tv, data = df, id = "subject_id", add_multi = TRUE)
 }
 
 }

@@ -8,6 +8,7 @@ display_coxph2(
   data,
   outcome,
   predictors,
+  id = NULL,
   add_multi = FALSE,
   format = "html",
   conf_level = 0.95,
@@ -16,48 +17,59 @@ display_coxph2(
 )
 }
 \arguments{
-\item{data}{A tibble or data frame with the full dataset.}
+\item{data}{A tibble or data frame.}
 
-\item{outcome}{Character string. The dependent variable (outcome) for
-Cox regression, formatted as "Surv(time, event)".}
+\item{outcome}{Character string. Outcome formatted as \code{"Surv(time, event)"}
+or \code{"Surv(tstart, tstop, event)"}.}
 
-\item{predictors}{Character vector. Independent variables
-(predictors/covariates) for univariable and/or multivariable modeling.}
+\item{predictors}{Character vector of predictors. May include \code{strata()}
+terms (e.g., \code{"strata(ulcer_age_cat)"}); these will be excluded from
+univariable models automatically.}
 
-\item{add_multi}{Logical; include multivariable results. Default is \code{FALSE}}
+\item{id}{Optional. Character string naming the cluster/subject ID variable
+for counting process models. Passed to \code{coxph()} for robust variance
+estimation. Default is \code{NULL}.}
 
-\item{format}{Display format in case characters need escaping. Placeholder for future use. Default is "html".}
+\item{add_multi}{Logical; include multivariable results. Default is \code{FALSE}.}
 
-\item{conf_level}{The confidence level to use for confidence intervals.
-Must be between 0 and 1. Default is 0.95.}
+\item{format}{Display format. Default is \code{"html"}.}
 
-\item{exponentiate}{Logical; whether to exponentiate coefficient estimates to show hazard ratios. Default is \code{TRUE}.}
+\item{conf_level}{Confidence level. Default is \code{0.95}.}
 
-\item{include_last_row}{Adds a row at the end of each set of results for spacing. Default is \code{TRUE}.}
+\item{exponentiate}{Logical; exponentiate to HRs. Default is \code{TRUE}.}
+
+\item{include_last_row}{Logical; add blank spacing row. Default is \code{TRUE}.}
 }
 \value{
 A tibble containing Cox regression results.
 }
 \description{
-Given a string with an "outcome" and a vector string with "predictors",
-displays univariable and (optionally) multivariable results from Cox proportional hazards regression
-in a format suitable for presentation.
+Given a string \code{outcome} and a character vector \code{predictors}, displays
+univariable and (optionally) multivariable Cox proportional hazards results
+in a presentation-ready format.
 
-This version allows you to explicitly provide the outcome and predictors in
-case there are issues with getting a full model fit.
+Handles stratified models and counting process data. Strata terms passed in
+\code{predictors} are detected and routed to the multivariable model only — they
+are excluded from univariable screening since they produce no HR estimate.
 }
 \examples{
 \dontrun{
 library(survival)
 data(lung)
 
-display_coxph2(data = lung,
-               outcome = "Surv(time, status)",
-               predictors = c("age", "sex", "ph.ecog"))
-
+# Standard Cox
 display_coxph2(data = lung,
                outcome = "Surv(time, status)",
                predictors = c("age", "sex", "ph.ecog"),
+               add_multi = TRUE)
+
+# Stratified Cox with counting process data
+display_coxph2(data = data_tte,
+               outcome = "Surv(tstart, tstop, healed)",
+               predictors = c("sharp_debridement", "ulcer_size",
+                              "age_at_current_visit", "diabetes",
+                              "strata(ulcer_age_cat)"),
+               id = "mrn",
                add_multi = TRUE)
 }
 }
