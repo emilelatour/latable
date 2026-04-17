@@ -62,6 +62,7 @@ display_coxph <- function(fit,
 
   # Silence no visible binding for global variable
   pr_chi <- NULL
+  formula <- NULL
 
   # Extract term labels and remove strata() terms — strata terms have no
   # coefficient and cannot be fit as univariable models
@@ -170,17 +171,20 @@ display_coxph <- function(fit,
       dplyr::left_join(multi_res,     by = c("names_to_match" = "term")) %>%
       dplyr::left_join(multi_res_lrt, by = "covariate") %>%
       mutate(
-        signif_adjusted = purrr::map_chr(
-          .x = p_value_wald_adjusted,
-          .f = ~ .calc_sig_ind(.x, format)
-        )
+        signif_wald_adjusted = .calc_sig_ind(p_value_wald_adjusted, format),
+        signif_lrt_adjusted  = .calc_sig_ind(p_value_lrt_adjusted,  format),
+        signif_adjusted      = dplyr::coalesce(signif_wald_adjusted,
+                                               signif_lrt_adjusted)
       ) %>%
+      dplyr::select(-signif_wald_adjusted,
+                    -signif_lrt_adjusted) %>%
       dplyr::rename(
-        estimate_unadjusted    = estimate,
-        lower_ci_unadjusted    = lower_ci,
-        upper_ci_unadjusted    = upper_ci,
+        estimate_unadjusted     = estimate,
+        lower_ci_unadjusted     = lower_ci,
+        upper_ci_unadjusted     = upper_ci,
         p_value_wald_unadjusted = p_value_wald,
-        p_value_lrt_unadjusted  = p_value_lrt
+        p_value_lrt_unadjusted  = p_value_lrt,
+        signif_unadjusted       = signif
       )
 
   } else {
@@ -491,6 +495,7 @@ display_coxph2 <- function(data,
 
   # Silence no visible binding for global variable
   pr_chi <- NULL
+  formula <- NULL
 
   # Separate strata terms from modelable predictors
   # Strata terms are passed to the multivariable model but excluded from
@@ -601,17 +606,20 @@ display_coxph2 <- function(data,
       dplyr::left_join(multi_res,     by = c("names_to_match" = "term")) %>%
       dplyr::left_join(multi_res_lrt, by = "covariate") %>%
       mutate(
-        signif_adjusted = purrr::map_chr(
-          .x = p_value_wald_adjusted,
-          .f = ~ .calc_sig_ind(.x, format)
-        )
+        signif_wald_adjusted = .calc_sig_ind(p_value_wald_adjusted, format),
+        signif_lrt_adjusted  = .calc_sig_ind(p_value_lrt_adjusted,  format),
+        signif_adjusted      = dplyr::coalesce(signif_wald_adjusted,
+                                               signif_lrt_adjusted)
       ) %>%
+      dplyr::select(-signif_wald_adjusted,
+                    -signif_lrt_adjusted) %>%
       dplyr::rename(
         estimate_unadjusted     = estimate,
         lower_ci_unadjusted     = lower_ci,
         upper_ci_unadjusted     = upper_ci,
         p_value_wald_unadjusted = p_value_wald,
-        p_value_lrt_unadjusted  = p_value_lrt
+        p_value_lrt_unadjusted  = p_value_lrt,
+        signif_unadjusted       = signif
       )
 
   } else {

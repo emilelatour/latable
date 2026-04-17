@@ -2,7 +2,7 @@
 % Please edit documentation in R/display-logistic.R
 \name{display_logistic}
 \alias{display_logistic}
-\title{Display logistic regression results (given a model fit)}
+\title{Display Logistic Regression Results}
 \usage{
 display_logistic(
   fit,
@@ -15,84 +15,45 @@ display_logistic(
 )
 }
 \arguments{
-\item{fit}{An object of class \code{glm} inheriting from "glm" which inherits from
-the class "lm.}
+\item{fit}{An object of class \code{glm} with \code{family = binomial}.}
 
-\item{data}{A tibble or data frame with the full data set.}
+\item{data}{A tibble or data frame with the full dataset used for modeling.}
 
-\item{add_multi}{Logical; include multivariable results. Default is \code{FALSE}}
+\item{add_multi}{Logical; whether to include multivariable results. Default
+is \code{FALSE}.}
 
-\item{format}{Display format in case I need to escape some characters. A
-place holder for now in case I need it in the future. Default is "html".}
+\item{format}{Display format. Default is \code{"html"}.}
 
-\item{conf_level}{The confidence level to use for the confidence interval.
-Must be strictly greater than 0 and less than 1. Defaults to 0.95, which
-corresponds to a 95 percent confidence interval.}
+\item{conf_level}{Confidence level for intervals. Default is \code{0.95}.}
 
-\item{exponentiate}{Logical indicating whether or not to exponentiate the
-the coefficient estimates. This is typical for logistic and multinomial
-regressions, but a bad idea if there is no log or logit link. Defaults to
-\code{TRUE}.}
+\item{exponentiate}{Logical; exponentiate estimates to ORs. Default is \code{TRUE}.}
 
-\item{include_last_row}{Adds a row at the end of each set of results to give
-some breathing room. Default is \code{TRUE}.}
+\item{include_last_row}{Logical; add blank spacing row. Default is \code{TRUE}.}
 }
 \value{
-A tibble
+A tibble containing the logistic regression results.
 }
 \description{
-Given a \code{fit} object, univariable and (optionally) multivariable results from
-logistic regression are displayed in a format suitable for presentation.
+Given a \code{glm} model fit object from logistic regression, displays
+univariable and (optionally) multivariable results in a format suitable for
+presentation.
 }
 \examples{
 \dontrun{
-library(epiDisplay)
-library(tidyverse)
-
 dplyr::glimpse(infert)
-model0 <- glm(case ~ induced + spontaneous + education,
-              family = binomial,
-              data = infert)
-summary(model0)
 
-display_logistic(fit = model0,
-                 data = infert)
+fit <- glm(case ~ induced + spontaneous + education,
+           family = binomial,
+           data = infert)
 
-display_logistic(fit = model0,
-                 data = infert,
-                 add_multi = TRUE)
+display_logistic(fit, data = infert)
+display_logistic(fit, data = infert, add_multi = TRUE)
 
-
-# How does an interaction term work?
-# This sort of works right now, but still needs work (2019-03-23)
-model0 <- glm(case ~ induced * education,
-              family = binomial,
-              data = infert)
-summary(model0)
-
-display_logistic(fit = model0,
-                 data = infert,
-                 add_multi = FALSE)
-
-display_logistic(fit = model0,
-                 data = infert,
-                 add_multi = TRUE)
-
-
-#### Another data set --------------------------------
-
-library(compareGroups)
-data(predimed)
-dplyr::glimpse(predimed)
-predimed <- predimed \%>\%
-  mutate_if(is.double, as.double)
-
-fit = glm(htn ~ sex + bmi + smoke,
-          family = binomial(link = "logit"),
-          data = predimed)
-
-display_logistic(fit = fit,
-                 data = predimed,
-                 add_multi = TRUE)
+# Interaction
+fit_int <- glm(case ~ induced * education,
+               family = binomial,
+               data = infert)
+display_logistic(fit_int, data = infert, add_multi = TRUE)
 }
+
 }
