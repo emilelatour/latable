@@ -56,7 +56,7 @@ display_logistic <- function(fit,
   }
 
   # Silence no visible binding for global variable
-  pr_chi <- NULL
+  pr_chi  <- NULL
   formula <- NULL
 
   # Extract term labels
@@ -383,18 +383,16 @@ display_logistic <- function(fit,
 #' presentation-ready format.
 #'
 #' This version lets you specify outcome and predictors explicitly, without
-#' needing a pre-built fit object. An optional `ref_level` controls which value
-#' of the outcome variable is modeled as the positive (event) class.
+#' needing a pre-built fit object. An optional `event_level` controls which
+#' value of the outcome variable is modeled as the positive (event) class.
 #'
 #' @param data A tibble or data frame.
 #' @param outcome Character string. Outcome variable name.
 #' @param predictors Character vector of predictor variable names.
-#' @param ref_level Character string. The value of the outcome variable to be
-#'   modeled as the positive (event) class. When supplied, the model is fit
-#'   with `(outcome == ref_level)` as the response. When `NULL` (default),
-#'   R's default factor coding determines the positive class. Note: despite
-#'   the name, this is not a traditional reference level — it is the level
-#'   being *modeled*.
+#' @param event_level Character string. The value of the outcome variable to
+#'   be modeled as the positive (event) class. When supplied, the model is fit
+#'   with `(outcome == event_level)` as the response. When `NULL` (default),
+#'   R's default factor coding determines the positive class.
 #' @param add_multi Logical; include multivariable results. Default is `FALSE`.
 #' @param format Display format. Default is `"html"`.
 #' @param conf_level Confidence level. Default is `0.95`.
@@ -425,13 +423,13 @@ display_logistic <- function(fit,
 #' display_logistic2(data = predimed,
 #'                   outcome = "htn",
 #'                   predictors = c("sex", "bmi", "smoke"),
-#'                   ref_level = "Yes",
+#'                   event_level = "Yes",
 #'                   add_multi = TRUE)
 #' }
 display_logistic2 <- function(data,
                               outcome,
                               predictors,
-                              ref_level        = NULL,
+                              event_level      = NULL,
                               add_multi        = FALSE,
                               format           = "html",
                               conf_level       = 0.95,
@@ -439,13 +437,13 @@ display_logistic2 <- function(data,
                               include_last_row = TRUE) {
 
   # Silence no visible binding for global variable
-  pr_chi <- NULL
+  pr_chi  <- NULL
   formula <- NULL
 
   ## Build model formula --------------------------------
-  # If ref_level supplied, model (outcome == ref_level) as the positive class
-  lhs <- if (!is.null(ref_level)) {
-    glue::glue("({outcome} == '{ref_level}')")
+  # If event_level supplied, model (outcome == event_level) as the positive class
+  lhs <- if (!is.null(event_level)) {
+    glue::glue("({outcome} == '{event_level}')")
   } else {
     glue::glue("{outcome}")
   }

@@ -61,7 +61,7 @@ display_coxph <- function(fit,
   }
 
   # Silence no visible binding for global variable
-  pr_chi <- NULL
+  pr_chi  <- NULL
   formula <- NULL
 
   # Extract term labels and remove strata() terms — strata terms have no
@@ -223,7 +223,7 @@ display_coxph <- function(fit,
 #' @importFrom broom tidy
 #' @importFrom survival coxph
 #' @importFrom dplyr mutate select bind_rows
-#' @importFrom purrr pluck map_chr
+#' @importFrom purrr pluck
 #' @importFrom tibble tibble
 #' @importFrom janitor clean_names
 #' @importFrom stringr str_split str_detect
@@ -310,8 +310,7 @@ display_coxph <- function(fit,
       ) %>%
       mutate(
         p_value_lrt = NA_real_,
-        signif = purrr::map_chr(.x = p_value_wald,
-                                .f = ~ .calc_sig_ind(.x, format))
+        signif      = .calc_sig_ind(p_value_wald, format)
       )
 
     fct_ref_lev <- levels(data[[independent]])[[1]]
@@ -353,8 +352,7 @@ display_coxph <- function(fit,
       ) %>%
       mutate(
         p_value_lrt = NA_real_,
-        signif = purrr::map_chr(.x = p_value_wald,
-                                .f = ~ .calc_sig_ind(.x, format))
+        signif      = .calc_sig_ind(p_value_wald, format)
       )
 
     row_one <- tibble::tibble(
@@ -390,8 +388,7 @@ display_coxph <- function(fit,
       ) %>%
       mutate(
         p_value_lrt = NA_real_,
-        signif = purrr::map_chr(.x = p_value_wald,
-                                .f = ~ .calc_sig_ind(.x, format))
+        signif      = .calc_sig_ind(p_value_wald, format)
       )
   }
 
@@ -452,7 +449,7 @@ display_coxph <- function(fit,
 #' @importFrom dplyr arrange bind_rows filter left_join mutate rename select
 #' @importFrom glue glue
 #' @importFrom janitor clean_names
-#' @importFrom purrr map map_chr
+#' @importFrom purrr map
 #' @importFrom stringr str_detect
 #' @importFrom survival coxph
 #' @importFrom tibble rownames_to_column
@@ -494,7 +491,7 @@ display_coxph2 <- function(data,
                            include_last_row = TRUE) {
 
   # Silence no visible binding for global variable
-  pr_chi <- NULL
+  pr_chi  <- NULL
   formula <- NULL
 
   # Separate strata terms from modelable predictors

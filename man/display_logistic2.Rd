@@ -8,7 +8,7 @@ display_logistic2(
   data,
   outcome,
   predictors,
-  ref_level = NULL,
+  event_level = NULL,
   add_multi = FALSE,
   format = "html",
   conf_level = 0.95,
@@ -23,12 +23,10 @@ display_logistic2(
 
 \item{predictors}{Character vector of predictor variable names.}
 
-\item{ref_level}{Character string. The value of the outcome variable to be
-modeled as the positive (event) class. When supplied, the model is fit
-with \code{(outcome == ref_level)} as the response. When \code{NULL} (default),
-R's default factor coding determines the positive class. Note: despite
-the name, this is not a traditional reference level — it is the level
-being \emph{modeled}.}
+\item{event_level}{Character string. The value of the outcome variable to
+be modeled as the positive (event) class. When supplied, the model is fit
+with \code{(outcome == event_level)} as the response. When \code{NULL} (default),
+R's default factor coding determines the positive class.}
 
 \item{add_multi}{Logical; include multivariable results. Default is \code{FALSE}.}
 
@@ -49,8 +47,8 @@ univariable and (optionally) multivariable logistic regression results in a
 presentation-ready format.
 
 This version lets you specify outcome and predictors explicitly, without
-needing a pre-built fit object. An optional \code{ref_level} controls which value
-of the outcome variable is modeled as the positive (event) class.
+needing a pre-built fit object. An optional \code{event_level} controls which
+value of the outcome variable is modeled as the positive (event) class.
 }
 \examples{
 \dontrun{
@@ -63,7 +61,7 @@ display_logistic2(data = infert,
 display_logistic2(data = predimed,
                   outcome = "htn",
                   predictors = c("sex", "bmi", "smoke"),
-                  ref_level = "Yes",
+                  event_level = "Yes",
                   add_multi = TRUE)
 }
 }
