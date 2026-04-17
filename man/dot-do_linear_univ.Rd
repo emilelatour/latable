@@ -29,5 +29,6 @@ A tibble with univariable linear results for the specified predictor.
 \description{
 Internal helper. Fits a univariable linear regression and returns results
 in a presentation-ready tibble. Handles continuous, categorical, and
-interaction terms. Overall per-predictor p-values are F-tests.
+interaction terms. Overall per-predictor p-values are likelihood ratio
+tests.
 }

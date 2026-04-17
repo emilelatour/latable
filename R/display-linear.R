@@ -5,10 +5,9 @@
 #' (optionally) multivariable results from linear regression in a format
 #' suitable for presentation.
 #'
-#' Note: the column names `p_value_lrt*` are retained for consistency with the
-#' other `display_*` functions, but for linear regression the overall-effect
-#' p-values are F-tests (the canonical test for nested linear models), not
-#' likelihood ratio tests.
+#' Overall per-predictor p-values are likelihood ratio tests, consistent with
+#' the other `display_*` functions in this package. For moderate to large
+#' samples LRT and F-test p-values are numerically nearly identical.
 #'
 #' @param fit An object of class `lm`, or `glm` with `family = gaussian`.
 #' @param data A tibble or data frame with the full dataset used for modeling.
@@ -48,7 +47,7 @@ display_linear <- function(fit,
   }
 
   # Silence no visible binding for global variable
-  pr_f    <- NULL
+  pr_chi  <- NULL
   formula <- NULL
 
   # Extract term labels
@@ -113,15 +112,14 @@ display_linear <- function(fit,
       )
     }
 
-    # Type III F-test via drop1(). For linear regression F is the canonical
-    # overall-effect test. lm()/glm() use complete cases internally
+    # Type III LRT via drop1(). lm()/glm() use complete cases internally
     # (na.action = na.omit by default), so no complete-case refit needed.
     suppressWarnings(
-      multi_res_lrt <- drop1(fit, test = "F") %>%
+      multi_res_lrt <- drop1(fit, test = "Chisq") %>%
         as.data.frame() %>%
         tibble::rownames_to_column(var = "covariate") %>%
         janitor::clean_names() %>%
-        dplyr::select(covariate, p_value_lrt_adjusted = pr_f) %>%
+        dplyr::select(covariate, p_value_lrt_adjusted = pr_chi) %>%
         dplyr::filter(covariate != "<none>")
     )
 
@@ -172,7 +170,8 @@ display_linear <- function(fit,
 #' @description
 #' Internal helper. Fits a univariable linear regression and returns results
 #' in a presentation-ready tibble. Handles continuous, categorical, and
-#' interaction terms. Overall per-predictor p-values are F-tests.
+#' interaction terms. Overall per-predictor p-values are likelihood ratio
+#' tests.
 #'
 #' @param data A tibble or data frame.
 #' @param formula Character string model formula.
@@ -207,10 +206,9 @@ display_linear <- function(fit,
   indep_split <- paste0(indep_split, collapse = "|")
 
   #### Overall p-value --------------------------------
-  # F-test (canonical for linear regression), not LR chi-squared
 
-  lrt_pval <- drop1(fit, test = "F") %>%
-    purrr::pluck("Pr(>F)", 2)
+  lrt_pval <- drop1(fit, test = "Chisq") %>%
+    purrr::pluck("Pr(>Chi)", 2)
 
   lrt_pval <- ifelse(length(lrt_pval) == 0, NA, lrt_pval)
 
@@ -409,7 +407,7 @@ display_linear2 <- function(data,
                             include_last_row = TRUE) {
 
   # Silence no visible binding for global variable
-  pr_f    <- NULL
+  pr_chi  <- NULL
   formula <- NULL
 
   ## Build model formula --------------------------------
@@ -474,15 +472,14 @@ display_linear2 <- function(data,
       )
     }
 
-    # Type III F-test via drop1(). For linear regression F is the canonical
-    # overall-effect test. lm()/glm() use complete cases internally
+    # Type III LRT via drop1(). lm()/glm() use complete cases internally
     # (na.action = na.omit by default), so no complete-case refit needed.
     suppressWarnings(
-      multi_res_lrt <- drop1(fit, test = "F") %>%
+      multi_res_lrt <- drop1(fit, test = "Chisq") %>%
         as.data.frame() %>%
         tibble::rownames_to_column(var = "covariate") %>%
         janitor::clean_names() %>%
-        dplyr::select(covariate, p_value_lrt_adjusted = pr_f) %>%
+        dplyr::select(covariate, p_value_lrt_adjusted = pr_chi) %>%
         dplyr::filter(covariate != "<none>")
     )
 

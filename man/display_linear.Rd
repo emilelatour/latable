@@ -35,10 +35,9 @@ Given an \code{lm} or Gaussian \code{glm} model fit object, displays univariable
 (optionally) multivariable results from linear regression in a format
 suitable for presentation.
 
-Note: the column names \verb{p_value_lrt*} are retained for consistency with the
-other \verb{display_*} functions, but for linear regression the overall-effect
-p-values are F-tests (the canonical test for nested linear models), not
-likelihood ratio tests.
+Overall per-predictor p-values are likelihood ratio tests, consistent with
+the other \verb{display_*} functions in this package. For moderate to large
+samples LRT and F-test p-values are numerically nearly identical.
 }
 \examples{
 \dontrun{
