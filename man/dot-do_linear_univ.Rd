@@ -2,38 +2,32 @@
 % Please edit documentation in R/display-linear.R
 \name{.do_linear_univ}
 \alias{.do_linear_univ}
-\title{Do univariable linear regression and extract results in nice format.}
+\title{Univariable Linear Regression Helper}
 \usage{
 .do_linear_univ(
   data,
   formula,
   format = "html",
   conf_level = 0.95,
-  include_last_row = TRUE,
-  ...
+  include_last_row = TRUE
 )
 }
 \arguments{
-\item{data}{A data frame or tibble.}
+\item{data}{A tibble or data frame.}
 
-\item{formula}{A character string specifying the formula for the regression.}
+\item{formula}{Character string model formula.}
 
-\item{format}{Display format in case I need to escape some characters. A
-placeholder for now in case I need it in the future. Default is "html".}
+\item{format}{Display format. Default is \code{"html"}.}
 
-\item{conf_level}{The confidence level to use for the confidence interval.
-Must be strictly greater than 0 and less than 1. Defaults to 0.95, which
-corresponds to a 95 percent confidence interval.}
+\item{conf_level}{Confidence level. Default is \code{0.95}.}
 
-\item{include_last_row}{Adds a row at the end of each set of results to give
-some breathing room. Default is \code{TRUE}.}
-
-\item{...}{Additional arguments.}
+\item{include_last_row}{Logical. Default is \code{TRUE}.}
 }
 \value{
-A tibble or data frame with regression results.
+A tibble with univariable linear results for the specified predictor.
 }
 \description{
-A helper function to be used in a loop to perform univariable linear regression
-and output nicely formatted results.
+Internal helper. Fits a univariable linear regression and returns results
+in a presentation-ready tibble. Handles continuous, categorical, and
+interaction terms. Overall per-predictor p-values are F-tests.
 }

@@ -204,8 +204,8 @@ flex_print_table_one <- function(x,
     
     header_list <- rlang::list2(!!! setNames(t1_default_lbls[c(1:4)], col_nms))
     
-    x <- x |>
-      flextable::flextable() |> 
+    x <- x %>%
+      flextable::flextable() %>% 
       flextable::set_header_labels(values = header_list)
     
   } else {
@@ -216,12 +216,12 @@ flex_print_table_one <- function(x,
       row_1 = c(t1_default_lbls[c(1:4)], t1_strata, t1_default_lbls[5]), 
       stringsAsFactors = FALSE)
     
-    x <- x |>
-      flextable::flextable() |> 
+    x <- x %>%
+      flextable::flextable() %>% 
       flextable::set_header_df(mapping = typology, 
-                               key = "col_keys") |> 
+                               key = "col_keys") %>% 
       flextable::merge_h(i = 1, 
-                         part = "header") |> 
+                         part = "header") %>% 
       flextable::fix_border_issues() 
     
   }
@@ -230,7 +230,7 @@ flex_print_table_one <- function(x,
   
   # Set columns width
   if (!is.null(width)) {
-    x <- x |>
+    x <- x %>%
       flextable::width(j = width_j,
                        width = width,
                        unit = width_unit)
@@ -249,7 +249,7 @@ flex_print_table_one <- function(x,
       
     }
     
-    x <- x |>
+    x <- x %>%
       flextable::width(j = width_j,
                        width = width,
                        unit = width_unit)
@@ -286,23 +286,23 @@ flex_print_table_one <- function(x,
                                "j" ~ "justify") 
     
     if (n_strata != 0) {
-      x <- x |>
+      x <- x %>%
         flextable::align(j = align_j,
                          align = align,
-                         part = "body") |>
+                         part = "body") %>%
         flextable::align(i = 2, 
                          j = align_j,
                          align = align,
-                         part = "header") |>
+                         part = "header") %>%
         flextable::align(i = 1, 
                          align = "center",
                          part = "header")
       
     } else {
-      x <- x |>
+      x <- x %>%
         flextable::align(j = align_j,
                          align = align,
-                         part = "body") |>
+                         part = "body") %>%
         flextable::align(i = 1, 
                          j = align_j,
                          align = align,
@@ -319,30 +319,30 @@ flex_print_table_one <- function(x,
   #   
   #   header_list <- rlang::list2(!!! setNames(col_lbls, col_nms))
   #   
-  #   x <- x |>
+  #   x <- x %>%
   #     flextable::set_header_labels(values = header_list)
   #   
   # }
   
   
   # Apply font size
-  x <- x |>
+  x <- x %>%
     flextable::fontsize(size = font_size,
                         part = "all")
   
   # Apply font name
-  x <- x |>
+  x <- x %>%
     flextable::font(fontname = font_name,
                     part = "all")
   
   
   # Bold column labels
   if (n_strata != 0) {
-    x <- x |>
+    x <- x %>%
       flextable::bold(i = c(1, 2), bold = TRUE, part = "header")
     
   } else {
-    x <- x |>
+    x <- x %>%
       flextable::bold(i = 1, bold = TRUE, part = "header")
     
   }
@@ -359,14 +359,14 @@ flex_print_table_one <- function(x,
   
   # No title and no subtitle
   if (is.null(subtitle) & is.null(title)) {
-    x <- x |> 
+    x <- x %>% 
       flextable::valign(i = 2 + header_adj, 
                         valign = "bottom", 
-                        part = "header") |> 
+                        part = "header") %>% 
       flextable::hline_top(part = "header",
                            border = officer::fp_border(color = "#666666",
                                                        width = 1.5,
-                                                       style = "solid")) |> 
+                                                       style = "solid")) %>% 
       flextable::hline_bottom(part = "header", 
                               border = officer::fp_border(color = "#666666", 
                                                           width = 1.5)) 
@@ -379,28 +379,28 @@ flex_print_table_one <- function(x,
     title <- stringr::str_squish(title)
     subtitle <- stringr::str_squish(subtitle)
     
-    x <- x |> 
+    x <- x %>% 
       flextable::valign(i = 2 + header_adj, 
                         valign = "bottom", 
-                        part = "header") |> 
-      flextable::add_header_lines(values = "") |>  # add Padding
-      flextable::add_header_lines(values = subtitle) |>  # add subtitle
-      flextable::add_header_lines(values = title) |>  # add title
-      flextable::hline_top(border = flextable::fp_border_default(width = 0), part = "header") |>
-      flextable::border_inner_h(border = flextable::fp_border_default(width = 0), part = "header") |>
-      flextable::align(i = c(1, 2), j = 1, align = "left", part = "header") |>
-      flextable::fontsize(i = 1, size = title_size, part = "header") |>
-      flextable::fontsize(i = 2, size = subtitle_size, part = "header") |>
-      flextable::bold(i = 2, bold = FALSE, part = "header") |>
+                        part = "header") %>% 
+      flextable::add_header_lines(values = "") %>%  # add Padding
+      flextable::add_header_lines(values = subtitle) %>%  # add subtitle
+      flextable::add_header_lines(values = title) %>%  # add title
+      flextable::hline_top(border = flextable::fp_border_default(width = 0), part = "header") %>%
+      flextable::border_inner_h(border = flextable::fp_border_default(width = 0), part = "header") %>%
+      flextable::align(i = c(1, 2), j = 1, align = "left", part = "header") %>%
+      flextable::fontsize(i = 1, size = title_size, part = "header") %>%
+      flextable::fontsize(i = 2, size = subtitle_size, part = "header") %>%
+      flextable::bold(i = 2, bold = FALSE, part = "header") %>%
       flextable::hline_top(part = "header",
                            border = officer::fp_border(color = "black",
                                                        width = 2.0,
-                                                       style = "solid")) |>
+                                                       style = "solid")) %>%
       flextable::hline(i = 3,
                        part = "header",
                        border = officer::fp_border(color = "#666666",
                                                    width = 1.5,
-                                                   style = "solid")) |> 
+                                                   style = "solid")) %>% 
       flextable::hline_bottom(part = "header", 
                               border = officer::fp_border(color = "#666666", 
                                                           width = 1.5)) 
@@ -413,25 +413,25 @@ flex_print_table_one <- function(x,
     
     title <- stringr::str_squish(title)
     
-    x <- x |>
+    x <- x %>%
       flextable::valign(i = 2 + header_adj, 
                         valign = "bottom", 
-                        part = "header") |> 
-      flextable::add_header_lines(values = "") |>  # add Padding
-      flextable::add_header_lines(values = title) |>  # add title
-      flextable::hline_top(border = flextable::fp_border_default(width = 0), part = "header") |>
-      flextable::border_inner_h(border = flextable::fp_border_default(width = 0), part = "header") |>
-      flextable::align(i = 1, j = 1, align = "left", part = "header") |>
-      flextable::fontsize(i = 1, size = title_size, part = "header") |>
+                        part = "header") %>% 
+      flextable::add_header_lines(values = "") %>%  # add Padding
+      flextable::add_header_lines(values = title) %>%  # add title
+      flextable::hline_top(border = flextable::fp_border_default(width = 0), part = "header") %>%
+      flextable::border_inner_h(border = flextable::fp_border_default(width = 0), part = "header") %>%
+      flextable::align(i = 1, j = 1, align = "left", part = "header") %>%
+      flextable::fontsize(i = 1, size = title_size, part = "header") %>%
       flextable::hline_top(part = "header",
                            border = officer::fp_border(color = "black",
                                                        width = 2.0,
-                                                       style = "solid")) |>
+                                                       style = "solid")) %>%
       flextable::hline(i = 2,
                        part = "header",
                        border = officer::fp_border(color = "#666666",
                                                    width = 1.5,
-                                                   style = "solid")) |> 
+                                                   style = "solid")) %>% 
       flextable::hline_bottom(part = "header", 
                               border = officer::fp_border(color = "#666666", 
                                                           width = 1.5)) 
@@ -442,14 +442,14 @@ flex_print_table_one <- function(x,
     
     title <- stringr::str_squish(footer)
     
-    x <- x |>
-      flextable::add_footer_lines(footer) |>
+    x <- x %>%
+      flextable::add_footer_lines(footer) %>%
       # flextable::hline_bottom(part = "footer",
       #                         border = officer::fp_border(color = "#666666",
       #                                                     width = 0.25,
-      #                                                     style = "solid")) |>
+      #                                                     style = "solid")) %>%
       flextable::font(fontname = font_name,
-                      part = "footer") |>
+                      part = "footer") %>%
       flextable::fontsize(i = 1, size = footer_size, part = "footer")
     
     
@@ -458,7 +458,7 @@ flex_print_table_one <- function(x,
   
   # Autofit if TRUE
   if (auto_fit) {
-    x <- x |>
+    x <- x %>%
       flextable::autofit()
   }
   

@@ -2,7 +2,7 @@
 % Please edit documentation in R/display-linear.R
 \name{display_linear2}
 \alias{display_linear2}
-\title{Display linear regression results (given variable names)}
+\title{Display Linear Regression Results (given variable names)}
 \usage{
 display_linear2(
   data,
@@ -15,46 +15,36 @@ display_linear2(
 )
 }
 \arguments{
-\item{data}{A tibble or data frame with the full data set.}
+\item{data}{A tibble or data frame.}
 
-\item{outcome}{Character string. The dependent variable (outcome) for
-linear regression.}
+\item{outcome}{Character string. Outcome variable name.}
 
-\item{predictors}{Character vector. Independent variables
-(predictors/covariates) for univariable and/or multivariable modelling.}
+\item{predictors}{Character vector of predictor variable names.}
 
 \item{add_multi}{Logical; include multivariable results. Default is \code{FALSE}.}
 
-\item{format}{Display format in case I need to escape some characters. A
-placeholder for now in case I need it in the future. Default is "html".}
+\item{format}{Display format. Default is \code{"html"}.}
 
-\item{conf_level}{The confidence level to use for the confidence interval.
-Must be strictly greater than 0 and less than 1. Defaults to 0.95, which
-corresponds to a 95 percent confidence interval.}
+\item{conf_level}{Confidence level. Default is \code{0.95}.}
 
-\item{include_last_row}{Adds a row at the end of each set of results to give
-some breathing room. Default is \code{TRUE}.}
+\item{include_last_row}{Logical; add blank spacing row. Default is \code{TRUE}.}
 }
 \value{
-A tibble with regression results.
+A tibble containing linear regression results.
 }
 \description{
-Given a string with an "outcome" and a vector string with "predictors",
-univariable and (optionally) multivariable results from linear regression
-are displayed in a format suitable for presentation.
+Given a string \code{outcome} and a character vector \code{predictors}, displays
+univariable and (optionally) multivariable linear regression results in a
+presentation-ready format.
 
-This version allows you to explicitly provide the outcome and predictors in
-case there are issues with getting a full model fit.
+This version lets you specify outcome and predictors explicitly, without
+needing a pre-built fit object.
 }
 \examples{
 \dontrun{
 display_linear2(data = mtcars,
                 outcome = "mpg",
-                predictors = c("cyl", "disp"))
-
-display_linear2(data = mtcars,
-                outcome = "mpg",
-                predictors = c("cyl", "disp"),
+                predictors = c("cyl", "disp", "hp"),
                 add_multi = TRUE)
 }
 }

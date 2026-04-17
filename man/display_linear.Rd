@@ -2,7 +2,7 @@
 % Please edit documentation in R/display-linear.R
 \name{display_linear}
 \alias{display_linear}
-\title{Display linear regression results (given a model fit)}
+\title{Display Linear Regression Results}
 \usage{
 display_linear(
   fit,
@@ -14,33 +14,36 @@ display_linear(
 )
 }
 \arguments{
-\item{fit}{An object of class \code{lm} or \code{glm} with \code{family = gaussian}.}
+\item{fit}{An object of class \code{lm}, or \code{glm} with \code{family = gaussian}.}
 
-\item{data}{A tibble or data frame with the full data set.}
+\item{data}{A tibble or data frame with the full dataset used for modeling.}
 
-\item{add_multi}{Logical; include multivariable results. Default is \code{FALSE}.}
+\item{add_multi}{Logical; whether to include multivariable results. Default
+is \code{FALSE}.}
 
-\item{format}{Display format in case I need to escape some characters. A
-placeholder for now in case I need it in the future. Default is "html".}
+\item{format}{Display format. Default is \code{"html"}.}
 
-\item{conf_level}{The confidence level to use for the confidence interval.
-Must be strictly greater than 0 and less than 1. Defaults to 0.95, which
-corresponds to a 95 percent confidence interval.}
+\item{conf_level}{Confidence level for intervals. Default is \code{0.95}.}
 
-\item{include_last_row}{Adds a row at the end of each set of results to give
-some breathing room. Default is \code{TRUE}.}
+\item{include_last_row}{Logical; add blank spacing row. Default is \code{TRUE}.}
 }
 \value{
-A tibble
+A tibble containing the linear regression results.
 }
 \description{
-Given a \code{fit} object, univariable and (optionally) multivariable results from
-linear regression are displayed in a format suitable for presentation.
+Given an \code{lm} or Gaussian \code{glm} model fit object, displays univariable and
+(optionally) multivariable results from linear regression in a format
+suitable for presentation.
+
+Note: the column names \verb{p_value_lrt*} are retained for consistency with the
+other \verb{display_*} functions, but for linear regression the overall-effect
+p-values are F-tests (the canonical test for nested linear models), not
+likelihood ratio tests.
 }
 \examples{
 \dontrun{
-# Example with the `mtcars` dataset:
-model <- glm(mpg ~ cyl + disp, family = gaussian, data = mtcars)
-display_linear(fit = model, data = mtcars, add_multi = TRUE)
+fit <- lm(mpg ~ cyl + disp + hp, data = mtcars)
+display_linear(fit, data = mtcars, add_multi = TRUE)
 }
+
 }
